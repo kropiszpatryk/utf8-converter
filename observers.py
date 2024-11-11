@@ -1,7 +1,8 @@
-from watchdog.events import FileSystemEventHandler, FileSystemEvent
+"""Observers module"""
 import logging
 from queue import Queue
 from typing import Any
+from watchdog.events import FileSystemEventHandler, FileSystemEvent
 
 
 class NewFileHandler(FileSystemEventHandler):

@@ -1,14 +1,17 @@
-from logger import init_logger
+"""Main run module"""
 import os
 import shutil
-from watchdog.observers import Observer
-from concurrent.futures import ThreadPoolExecutor, Future
 import queue
-from observers import NewFileHandler
-from text_file_converter import TextFileConverter
+
+from typing import Optional
 from pathlib import Path
 from dotenv import load_dotenv
-from typing import Optional
+from watchdog.observers import Observer
+from concurrent.futures import ThreadPoolExecutor, Future
+from logger import init_logger
+from observers import NewFileHandler
+from text_file_converter import TextFileConverter
+
 
 env_path = Path(".") / ".env"
 load_dotenv(dotenv_path=env_path)

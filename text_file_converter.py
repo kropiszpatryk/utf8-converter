@@ -1,3 +1,4 @@
+"""File converter module"""
 import os
 import mimetypes
 import logging

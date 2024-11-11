@@ -1,5 +1,6 @@
-import logging
+"""Logger module"""
 import os
+import logging
 from logging import Logger
 
 
