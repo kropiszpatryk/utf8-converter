@@ -24,22 +24,17 @@ The **Text File Converter** application monitors a specified input directory for
 
 ### **Prepare Environment Variables**
 
-1. **Create a `.env` file** in the root directory with the following variables:
+1. **Setup a `.env` file** in the root directory with the following variables:
 
    ```plaintext
    INPUT_DIRECTORY=./input_files
    OUTPUT_DIRECTORY=./output_files
    MAX_WORKERS=2
 
-2. **Ensure that the input_files and output_files directories are created:**
+2. **Ensure that the input_files directory is created:**
 
    ```bash
-    mkdir -p input_files output_files
-   
-3. **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-
+    mkdir -p input_files
 
 ## 🐳 Using Docker
 
@@ -91,7 +86,19 @@ Modify MAX_WORKERS in .env to set the number of files processed simultaneously.
 
 ## 🤖 Running Locally Without Docker
 To run the application locally:
-
+1. Install pipenv
+```bash
+pip install pipenv
+```
+2. Initialize a Pipfile and install packages:
+```bash
+pipenv install -r requirements.txt
+```
+3. Activate the virtual environment
+```bash
+pipenv shell
+```
+4. Run script
 ```bash
 python main.py
 ```
