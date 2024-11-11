@@ -9,7 +9,9 @@ class TextFileConverter:
     Converts text files to UTF-8 encoding and saves them in a specified output directory.
     """
 
-    def __init__(self, output_directory: str, processed_directory: str, logger: logging.Logger) -> None:
+    def __init__(
+        self, output_directory: str, processed_directory: str, logger: logging.Logger
+    ) -> None:
         """
         Initializes the TextFileConverter with an output directory and logger.
         Creates the output directory if it does not exist.
@@ -38,10 +40,10 @@ class TextFileConverter:
         Returns:
             bool: True if the file is a text file, False otherwise.
         """
-        if not file_path.endswith('.txt'):
+        if not file_path.endswith(".txt"):
             return False
         mime_type, _ = mimetypes.guess_type(file_path)
-        return mime_type == 'text/plain'
+        return mime_type == "text/plain"
 
     def convert_file_to_utf8(self, file_path: str) -> bool:
         """
@@ -61,11 +63,17 @@ class TextFileConverter:
         output_name = f"{os.path.splitext(base_name)[0]}_utf8_converted.txt"
         output_path = os.path.join(self.output_directory, output_name)
         try:
-            with open(file_path, 'r', errors='replace') as file, open(output_path, 'w', encoding='utf-8') as utf8_file:
+            with open(file_path, "r", errors="replace") as file, open(
+                output_path, "w", encoding="utf-8"
+            ) as utf8_file:
                 while chunk := file.read(1024):
                     utf8_file.write(chunk)
-            self.logger.debug(f"File {file_path} successfully converted and saved as {output_path}.")
-            processed_path = os.path.join(self.processed_directory, os.path.basename(file_path))
+            self.logger.debug(
+                f"File {file_path} successfully converted and saved as {output_path}."
+            )
+            processed_path = os.path.join(
+                self.processed_directory, os.path.basename(file_path)
+            )
             shutil.move(file_path, processed_path)
             self.logger.debug(f"Original file {file_path} moved to {processed_path}.")
             return True

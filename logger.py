@@ -17,13 +17,15 @@ def init_logger() -> Logger:
 
     file_handler = logging.FileHandler(log_path)
     file_handler.setLevel(logging.DEBUG)
-    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)
-    stream_formatter = logging.Formatter('%(message)s')
+    stream_formatter = logging.Formatter("%(message)s")
     stream_handler.setFormatter(stream_formatter)
     logger.addHandler(stream_handler)
 

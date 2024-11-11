@@ -20,9 +20,12 @@ class FileConversionManager:
     Manages folder monitoring, file queuing, and text file conversion to UTF-8.
     """
 
-    def __init__(self, input_directory: str, output_directory: str, max_workers: int = 2) -> None:
+    def __init__(
+        self, input_directory: str, output_directory: str, max_workers: int = 2
+    ) -> None:
         """
-        Initializes the file conversion manager with logger, converter, and counters.
+        Initializes the file conversion manager
+         with logger, converter, and counters.
 
         Args:
             input_directory (str): Directory to monitor for new files.
@@ -35,7 +38,9 @@ class FileConversionManager:
         self.error_directory = os.path.join(self.input_directory, "errors")
         os.makedirs(self.processed_directory, exist_ok=True)
         os.makedirs(self.error_directory, exist_ok=True)
-        self.converter = TextFileConverter(output_directory, self.processed_directory, logger)
+        self.converter = TextFileConverter(
+            output_directory, self.processed_directory, logger
+        )
         self.file_queue = queue.Queue()
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
         self.total_files = 0
@@ -55,7 +60,9 @@ class FileConversionManager:
         if self.total_files > 0:
             progress_ratio = self.processed_files / self.total_files
             progress_bar = f"[{'#' * int(progress_ratio * 30):<30}]"
-            logger.info(f"Progress: {progress_bar} {self.processed_files}/{self.total_files} files processed.")
+            logger.info(
+                f"Progress: {progress_bar} {self.processed_files}/{self.total_files} files processed."
+            )
 
     def process_files(self) -> None:
         """
@@ -64,7 +71,9 @@ class FileConversionManager:
         """
         while True:
             file_path = self.file_queue.get()
-            future = self.executor.submit(self.converter.convert_file_to_utf8, file_path)
+            future = self.executor.submit(
+                self.converter.convert_file_to_utf8, file_path
+            )
             if not future.result():
                 shutil.move(file_path, self.error_directory)
 
@@ -95,9 +104,12 @@ class FileConversionManager:
         logger.info(f"Monitoring folder: {self.input_directory}")
 
         try:
-            self.total_files = sum(1 for file in os.listdir(self.input_directory)
-                                   if file.endswith('.txt') and os.path.isfile(os.path.join(self.input_directory, file))
-                                   )
+            self.total_files = sum(
+                1
+                for file in os.listdir(self.input_directory)
+                if file.endswith(".txt")
+                and os.path.isfile(os.path.join(self.input_directory, file))
+            )
             self.process_files()
         except KeyboardInterrupt:
             observer.stop()
@@ -110,7 +122,11 @@ if __name__ == "__main__":
     max_workers: int = int(os.getenv("MAX_WORKERS", "2"))
 
     if input_directory and output_directory:
-        manager = FileConversionManager(input_directory, output_directory, max_workers=max_workers)
+        manager = FileConversionManager(
+            input_directory, output_directory, max_workers=max_workers
+        )
         manager.monitor_folder()
     else:
-        logger.error("Error: INPUT_DIRECTORY and OUTPUT_DIRECTORY must be set in the environment.")
+        logger.error(
+            "Error: INPUT_DIRECTORY and OUTPUT_DIRECTORY must be set in the environment."
+        )
