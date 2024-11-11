@@ -16,6 +16,7 @@ class TextFileConverter:
 
         Args:
             output_directory (str): Directory where converted files will be saved.
+            processed_directory (str): Directory where processed files will be moved.
             logger (logging.Logger): Logger instance for logging events.
         """
         self.output_directory = output_directory
