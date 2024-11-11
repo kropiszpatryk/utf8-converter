@@ -24,8 +24,7 @@ class FileConversionManager:
         self, input_directory: str, output_directory: str, max_workers: int = 2
     ) -> None:
         """
-        Initializes the file conversion manager
-         with logger, converter, and counters.
+        Initializes the file conversion manager with logger, converter, and counters.
 
         Args:
             input_directory (str): Directory to monitor for new files.
@@ -45,6 +44,26 @@ class FileConversionManager:
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
         self.total_files = 0
         self.processed_files = 0
+        self.process_existing_files()
+
+    def process_existing_files(self) -> None:
+        """
+        Processes any .txt files that already exist in the input directory at startup.
+        """
+        existing_files = [
+            f for f in os.listdir(self.input_directory) if f.endswith(".txt")
+        ]
+        for file_name in existing_files:
+            file_path = os.path.join(self.input_directory, file_name)
+            self.total_files += 1
+            future = self.executor.submit(
+                self.converter.convert_file_to_utf8, file_path
+            )
+            future.add_done_callback(self.update_progress_callback(file_path))
+
+        if self.total_files > 0:
+            logger.info(f"Found {self.total_files} existing .txt files to process.")
+            self.log_progress_bar()
 
     def increment_total_files(self) -> None:
         """
@@ -64,6 +83,21 @@ class FileConversionManager:
                 f"Progress: {progress_bar} {self.processed_files}/{self.total_files} files processed."
             )
 
+    def update_progress_callback(self, file_path: str):
+        """
+        Returns a callback function that updates the progress bar after processing a file.
+
+        Args:
+            file_path (str): Path of the file being processed.
+        """
+
+        def callback(future: Future) -> None:
+            self.processed_files += 1
+            self.log_progress_bar()
+            logger.debug(f"File processed: {file_path}")
+
+        return callback
+
     def process_files(self) -> None:
         """
         Processes files in the queue by submitting conversion tasks to the executor.
@@ -76,20 +110,7 @@ class FileConversionManager:
             )
             if not future.result():
                 shutil.move(file_path, self.error_directory)
-
-            def update_progress(future: Future) -> None:
-                """
-                Callback function to update the progress after a file is processed.
-
-                Args:
-                    future (Future): The future object associated with the completed task.
-                """
-                self.file_queue.task_done()
-                self.processed_files += 1
-                self.log_progress_bar()
-                logger.debug(f"File processed: {file_path}")
-
-            future.add_done_callback(update_progress)
+            future.add_done_callback(self.update_progress_callback(file_path))
 
     def monitor_folder(self) -> None:
         """
